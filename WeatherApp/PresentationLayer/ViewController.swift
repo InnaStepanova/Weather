@@ -12,7 +12,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
-        // Do any additional setup after loading the view.
+        NetworkManager(requestService: RequestSender()).getWeatherFor(city: "Москва") { result in
+            switch result {
+            case .success(let weatherResponce): print("WEATHER RESPONCE: \(weatherResponce)")
+            case .failure(let error): print(error)
+            }
+        }
     }
 
 
