@@ -37,7 +37,7 @@ private extension AppDelegate {
 //        )
 
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = navigationController
+        window?.rootViewController = CustomTabBarController()
         window?.makeKeyAndVisible()
     }
 }
