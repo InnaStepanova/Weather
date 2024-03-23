@@ -12,7 +12,7 @@ struct APIWeatherResponse: Codable {
 //    let message: Int
 //    let cnt: Int
     let list: [WeatherInfo]
-//    let city: City
+    let city: City
 }
 
 struct WeatherInfo: Codable {
@@ -20,7 +20,7 @@ struct WeatherInfo: Codable {
     let main: MainWeather
     let weather: [WeatherDetail]
 //    let clouds: Clouds
-//    let wind: Wind
+    let wind: Wind
 //    let visibility: Int
 //    let pop: Double
 //    let rain: Rain?
@@ -51,11 +51,11 @@ struct WeatherDetail: Codable {
 //    let all: Int
 //}
 //
-//struct Wind: Codable {
-//    let speed: Double
+struct Wind: Codable {
+    let speed: Double
 //    let deg: Int
 //    let gust: Double
-//}
+}
 //
 //struct Rain: Codable {
 //    let threeHours: Double
@@ -69,16 +69,16 @@ struct WeatherDetail: Codable {
 //    let pod: String
 //}
 //
-//struct City: Codable {
+struct City: Codable {
 //    let id: Int
-//    let name: String
+    let name: String
 //    let coord: Coord
 //    let country: String
 //    let population: Int
 //    let timezone: Int
 //    let sunrise: TimeInterval
 //    let sunset: TimeInterval
-//}
+}
 //
 //struct Coord: Codable {
 //    let lat: Double

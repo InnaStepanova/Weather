@@ -14,6 +14,7 @@ struct WeatherRequest: URLRequestProtocol {
     init(urlString: String) {
         self.urlString = urlString
         urlRequest = request(stringURL: urlString)
+        
     }
     
     mutating func request(stringURL: String) -> URLRequest? {

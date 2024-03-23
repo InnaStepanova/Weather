@@ -16,24 +16,20 @@ final class CustomTabBarController: UITabBarController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+
         configure()
     }
     
     private func configure() {
         
-        tabBar.tintColor = .black
-        tabBar.barTintColor = .black
-        tabBar.backgroundColor = .white
-//        tabBar.layer.cornerRadius = 30
-//        tabBar.layer.borderWidth = 1
-//        tabBar.layer.masksToBounds = true
+        tabBar.tintColor = UIColor(red: 180.0/255.0, green: 180.0/255.0, blue: 210.0/255.0, alpha: 1.0)
+        tabBar.barTintColor = .white
+        tabBar.backgroundColor = UIColor(red: 80.0/255.0, green: 78.0/255.0, blue: 131.0/255.0, alpha: 1.0)
+
         
-        let locationWeatherViewController = ViewController()
-        let searchWeatherViewController = SearchWeatherViewController()
-//
-//        let overviewNavigation = NavBarController(rootViewController: overviewController)
-//        let sessionNavigation = NavBarController(rootViewController: sessionController)
-//        
+        let locationWeatherViewController = LocationWeatherModuleFactory().make()
+        let searchWeatherViewController = UINavigationController(rootViewController: SearchWeatherViewController())
+      
         locationWeatherViewController.tabBarItem = UITabBarItem(
             title: "Location",
             image: UIImage(systemName: "location"),

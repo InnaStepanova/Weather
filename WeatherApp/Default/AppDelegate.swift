@@ -26,16 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Initial application settings
 
 private extension AppDelegate {
-    /// Создание и отображение стартового ViewController
     func createAndShowStartVC() {
-        let mainVC = ViewController()
-        let navigationController = UINavigationController(rootViewController: mainVC)
-        
-//        PresentationAssembly().weatherScreen.config(
-//            view: mainVC,
-//            navigationController: navigationController
-//        )
-
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = CustomTabBarController()
         window?.makeKeyAndVisible()

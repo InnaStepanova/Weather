@@ -32,10 +32,9 @@ final class BoxView: UIView {
         return stackView
     }()
     
-    init(title: String, value: String) {
+    init(title: String) {
         super.init(frame: .zero)
         titleLabel.text = title
-        detailLabel.text = value
         commonInit()
     }
     
@@ -59,5 +58,10 @@ final class BoxView: UIView {
             stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
             stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ])
+    }
+    func setup(text: String) {
+        DispatchQueue.main.async {
+            self.detailLabel.text = text
+        }
     }
 }

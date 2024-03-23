@@ -1,96 +1,41 @@
-////
-////  LocationWeatherScreenPresenter.swift
-////  WeatherApp
-////
-////  Created by Лаванда on 22.03.2024.
-////
 //
-//import Foundation
+//  LocationWeatherScreenPresenter.swift
+//  WeatherApp
 //
-//protocol LocationWeatherScreenPresentationLogic: AnyObject {
-//    init(view: WeatherScreenView)
-//    
-//    func getWeatherForCity()
-//    func openCityScreen()
-//    func setLanguage(_ language: Language)
-//}
-//
-//final class WeatherScreenPresenter {
-//    // MARK: - Architecture Properties
-//    
-//    weak var view: WeatherScreenView?
-//    var router: WeatherScreenRoutingLogic?
-//    
-//    // MARK: - Dependency properties
-//    
-//    var networkManager: INetworkManager?
-//    var userDefaultsService: IUserDefaultsStorageService?
-//    
-//    
-//    // MARK: - Private properties
-//    
-//    // MARK: - Initializer
-//    
-//    required init(view: WeatherScreenView) {
-//        self.view = view
-//    }
-//}
-//
-//// MARK: - Presentation Logic
-//
-//extension WeatherScreenPresenter: LocationWeatherScreenPresentationLogic {
-//    func setLanguage(_ language: Language) {
-//        userDefaultsService?.saveLanguage(language)
-//        getWeatherForCity()
-//    }
-//    
-//    func openCityScreen() {
-//        router?.routeTo(target: .cityListScreen)
-//    }
-//    
-//    func getWeatherForCity() {
-//        guard let userDefaultsService else {
-//            return assertionFailure("Не инициализирован UserDefaults")
-//        }
-//        
-//        networkManager?.getWeatherFor(
-//            city: userDefaultsService.loadCity(),
-//            language: userDefaultsService.loadLanguage(),
-//            completion: { [weak self] result in
-//                switch result {
-//                case .success(let serverModel):
-//                    let city = WeatherViewModel(
-//                        city: serverModel.city.name
-//                    )
-//                    
-//                    var infoModels: [WeatherCellViewModel] = []
-//                    
-//                    serverModel.list.forEach { model in
-//                        if let description = model.weather.first?.description {
-//                            let infoModel = WeatherCellViewModel(
-//                                date: model.dtTxt,
-//                                temperature: "\(model.main.temp)",
-//                                description: description
-//                            )
-//                            
-//                            infoModels.append(infoModel)
-//                        } else {
-//                            let infoModel = WeatherCellViewModel(
-//                                date: model.dtTxt,
-//                                temperature: "\(model.main.temp)",
-//                                description: ""
-//                            )
-//                            
-//                            infoModels.append(infoModel)
-//                        }
-//                    }
-//                    
-//                    self?.view?.updateView(city)
-//                    self?.view?.display(models: infoModels)
-//                case .failure(let error):
-//                    DTLogger.shared.log(.error, error.localizedDescription)
-//                }
-//            }
-//        )
-//    }
-//}
+//  Created by Лаванда on 22.03.2024.
+
+import UIKit
+import CoreLocation
+
+protocol LocationWeatherScreenPresenterProtocol: AnyObject {
+    func setupView()
+}
+
+final class LocationWeatherScreenPresenter: LocationWeatherScreenPresenterProtocol {
+  
+    weak var view: LocationWeatherScreenViewProtocol?
+    let networkManader: NetworkManagerProtocol
+    let locationManager: LocationManagerProtocol
+    
+    init(networkManader: NetworkManagerProtocol, locationManager: LocationManagerProtocol) {
+        self.networkManader = networkManader
+        self.locationManager = locationManager
+    }
+    
+    func setupView() {
+        locationManager.getCurrentCity { [weak self] city in
+            guard let self = self else {return}
+            if let city = city {
+                self.networkManader.getWeatherFor(city: city) { result in
+                    switch result {
+                    case .success(let serverModel):
+                        let weather = LocationWeatherModel(serverModel: serverModel)
+                        self.view?.setup(weather: weather)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+        }
+    }
+}
