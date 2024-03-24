@@ -1,13 +1,17 @@
 //
-//  ViewController.swift
+//  CityWeatherSCreenViewController.swift
 //  WeatherApp
 //
-//  Created by Лаванда on 21.03.2024.
+//  Created by Лаванда on 24.03.2024.
 //
 
 import UIKit
 
-class LocationWeatherScreenViewController: UIViewController {
+protocol CityWeatherScreenViewProtocol {
+    
+}
+
+class CityWeatherSCreenViewController: UIViewController {
     
     let weatherView = LocationWeatherScreenView()
     let presenter: LocationWeatherScreenPresenterProtocol
@@ -22,8 +26,10 @@ class LocationWeatherScreenViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.setupView()
         view.addSubview(weatherView)
         
         weatherView.translatesAutoresizingMaskIntoConstraints = false
@@ -35,9 +41,10 @@ class LocationWeatherScreenViewController: UIViewController {
             weatherView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
     }
+
 }
 
-extension LocationWeatherScreenViewController: LocationWeatherScreenViewProtocol {
+extension CityWeatherSCreenViewController: LocationWeatherScreenViewProtocol {
     func setup(weather: LocationWeatherModel) {
         weatherView.setup(weather: weather)
     }

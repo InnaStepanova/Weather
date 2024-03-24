@@ -49,12 +49,15 @@ class SearchWeatherViewController: UIViewController {
 // Добавим расширение для делегата
 extension SearchWeatherViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()  // Скрываем клавиатуру при нажатии на "done"
-        navigationController?.pushViewController(LocationWeatherModuleFactory().make(), animated: true)
+        textField.resignFirstResponder()
+        if let text = textField.text {
+            navigationController?.pushViewController(CityWeatherScreenFactory().make(with: CityWeatherScreenFactory.Contex(param: textField.text ?? "")), animated: true)
+        }
+        textField.text = nil
         return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.text = nil
+//        textField.text = nil
     }
 }

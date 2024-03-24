@@ -67,10 +67,12 @@ final class LocationWeatherScreenView: UIView {
     }()
     
     private let fiveDaysWeatherTableView = UITableView()
+    private let activityIndicator = UIActivityIndicatorView()
     
     init() {
         super.init(frame: .zero)
         commonInit()
+        hideAllView()
     }
     
     required init?(coder: NSCoder) {
@@ -85,9 +87,14 @@ final class LocationWeatherScreenView: UIView {
         fiveDaysWeatherTableView.backgroundColor = .white.withAlphaComponent(0.3)
         fiveDaysWeatherTableView.isScrollEnabled = false
         
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .large
+        activityIndicator.startAnimating()
+        
         addSubview(baseImageView)
         baseImageView.addSubview(stackView)
         baseImageView.addSubview(fiveDaysWeatherTableView)
+        baseImageView.addSubview(activityIndicator)
         
         stackView.addArrangedSubview(cityLabel)
         stackView.addArrangedSubview(temperatureLabel)
@@ -101,6 +108,7 @@ final class LocationWeatherScreenView: UIView {
         baseImageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         fiveDaysWeatherTableView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             baseImageView.topAnchor.constraint(equalTo: topAnchor),
@@ -116,7 +124,9 @@ final class LocationWeatherScreenView: UIView {
             fiveDaysWeatherTableView.leadingAnchor.constraint(equalTo: baseImageView.leadingAnchor, constant: 16),
             fiveDaysWeatherTableView.trailingAnchor.constraint(equalTo: baseImageView.trailingAnchor, constant: -16),
             fiveDaysWeatherTableView.heightAnchor.constraint(equalToConstant: 280),
-            fiveDaysWeatherTableView.bottomAnchor.constraint(equalTo: baseImageView.bottomAnchor, constant: -16)
+            fiveDaysWeatherTableView.bottomAnchor.constraint(equalTo: baseImageView.bottomAnchor, constant: -16),
+            activityIndicator.centerXAnchor.constraint(equalTo: baseImageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: baseImageView.centerYAnchor)
         ])
     }
     func setup(weather: LocationWeatherModel) {
@@ -156,6 +166,23 @@ final class LocationWeatherScreenView: UIView {
         
         if let windSpeed = weather.windSpeed {
             windSpeedBox.setup(text: "\(windSpeed) м/с")
+        }
+        showAllView()
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+        }
+    }
+    func hideAllView() {
+        DispatchQueue.main.async { [weak self] in
+            self?.boxStackView.isHidden = true
+            self?.fiveDaysWeatherTableView.isHidden = true
+        }
+    }
+    
+    func showAllView() {
+        DispatchQueue.main.async { [weak self] in
+            self?.boxStackView.isHidden = false
+            self?.fiveDaysWeatherTableView.isHidden = false
         }
     }
 }

@@ -12,6 +12,7 @@ struct WeatherRequest: URLRequestProtocol {
     var urlString: String
     
     init(urlString: String) {
+        print(urlString)
         self.urlString = urlString
         urlRequest = request(stringURL: urlString)
         
