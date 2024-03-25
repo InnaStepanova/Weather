@@ -11,13 +11,11 @@ class WeatherViewCell: UITableViewCell {
     
     let dateLabel: UILabel = {
         let label = UILabel()
-//        label.text = "22/03/24"
         return label
     }()
     
     let weatherImageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.image = UIImage(systemName: "cloud")
         imageView.contentMode = .scaleAspectFill
         imageView.tintColor = UIColor(red: 80.0/255.0, green: 78.0/255.0, blue: 131.0/255.0, alpha: 1.0)
         return imageView
@@ -25,7 +23,6 @@ class WeatherViewCell: UITableViewCell {
 
     let tempLabel: UILabel = {
         let label = UILabel()
-//        label.text = "Макс: 5°, мин: -3°"
         return label
     }()
     
@@ -39,13 +36,10 @@ class WeatherViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(model: Weather) {
+    func set(model: WeatherViewModel) {
         dateLabel.text = "\(model.date)"
-        if let weatherId = model.weatherId {
-            weatherImageView.image = UIImage(systemName: getConditionName(weatherId: weatherId))
-        }
+        weatherImageView.image = UIImage(systemName: getConditionName(weatherId: model.descriptionId))
         tempLabel.text = "Макс: \(model.maxTemp)°, мин: \(model.minTemp)°"
-        
     }
     
     private func setup() {

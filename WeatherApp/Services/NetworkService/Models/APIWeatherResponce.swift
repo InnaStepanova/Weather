@@ -53,8 +53,8 @@ struct WeatherDetail: Codable {
 //
 struct Wind: Codable {
     let speed: Double
-//    let deg: Int
-//    let gust: Double
+    let deg: Int
+    let gust: Double
 }
 //
 //struct Rain: Codable {

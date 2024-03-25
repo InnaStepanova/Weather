@@ -28,7 +28,8 @@ final class CustomTabBarController: UITabBarController {
 
         
         let locationWeatherViewController = LocationWeatherModuleFactory().make()
-        let searchWeatherViewController = UINavigationController(rootViewController: SearchWeatherViewController())
+        let searchWeatherViewController = UINavigationController(rootViewController: SearchWeatherScreenFactory().make())
+        
       
         locationWeatherViewController.tabBarItem = UITabBarItem(
             title: "Location",

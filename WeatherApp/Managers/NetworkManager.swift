@@ -35,18 +35,20 @@ extension NetworkManager: NetworkManagerProtocol {
         city: String,
         completion: @escaping (Result<APIWeatherResponse, NetworkError>) -> Void
     ) {
-        let requestConfig = RequestFactory.WeatherDataRequest.weatherModelConfig(for: city)
-        
-        requestService.send(config: requestConfig) { result in
-            switch result {
-            case .success(let (model, _, _)):
-                guard let model else {
-                    completion(.failure(.notFound))
-                    return
-                }
-                completion(.success(model))
-            case .failure(let error):
-                completion(.failure(error))
+            print("FROM INET")
+            let requestConfig = RequestFactory.WeatherDataRequest.weatherModelConfig(for: city)
+            
+            requestService.send(config: requestConfig) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success(let (model, _, _)):
+                    guard let model else {
+                        completion(.failure(.notFound))
+                        return
+                    }
+                    completion(.success(model))
+                case .failure(let error):
+                    completion(.failure(error))
             }
         }
     }

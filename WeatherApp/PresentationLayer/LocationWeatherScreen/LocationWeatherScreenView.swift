@@ -8,14 +8,15 @@
 import UIKit
 
 protocol LocationWeatherScreenViewProtocol: AnyObject {
-    func setup(weather: LocationWeatherModel)
+    func setup(weather: CityWeatherViewModel)
 }
 
 final class LocationWeatherScreenView: UIView {
     
-    private var weather: LocationWeatherModel?
-    private let baseImageView: UIImageView = {
+    private var weather: CityWeatherViewModel?
+    private lazy var baseImageView: UIImageView = {
         let imageView = UIImageView()
+        
         imageView.image = UIImage(named: "1")
         return imageView
     }()
@@ -53,9 +54,9 @@ final class LocationWeatherScreenView: UIView {
         return stackView
     }()
     
-    private var pressureBox = BoxView(title: "Давление")
-    private var humidityBox = BoxView(title: "Влажность")
-    private var windSpeedBox = BoxView(title: "Скорость ветра")
+    private lazy var pressureBox = BoxView(title: "Давление")
+    private lazy var humidityBox = BoxView(title: "Влажность")
+    private lazy var windSpeedBox = BoxView(title: "Скорость ветра")
     
     private lazy var boxStackView: UIStackView = {
         let stackView = UIStackView()
@@ -66,13 +67,19 @@ final class LocationWeatherScreenView: UIView {
         return stackView
     }()
     
-    private let fiveDaysWeatherTableView = UITableView()
-    private let activityIndicator = UIActivityIndicatorView()
+    private lazy var fiveDaysWeatherTableView = UITableView()
+    private lazy var activityIndicator = UIActivityIndicatorView()
     
     init() {
         super.init(frame: .zero)
         commonInit()
         hideAllView()
+    }
+    
+    init(with model: CityWeatherViewModel) {
+        super.init(frame: .zero)
+        commonInit()
+        setup(weather: model)
     }
     
     required init?(coder: NSCoder) {
@@ -129,49 +136,25 @@ final class LocationWeatherScreenView: UIView {
             activityIndicator.centerYAnchor.constraint(equalTo: baseImageView.centerYAnchor)
         ])
     }
-    func setup(weather: LocationWeatherModel) {
+    func setup(weather: CityWeatherViewModel) {
         self.weather = weather
         
         DispatchQueue.main.async {
             self.fiveDaysWeatherTableView.reloadData()
             self.cityLabel.text = weather.city
-        }
-        
-        if let max = weather.weathers.first?.maxTemp, let min = weather.weathers.first?.minTemp {
-            DispatchQueue.main.async {
-                self.minMaxTemperatureLabel.text = "Макс: \(max)°, мин: \(min)°"
-            }
-        }
-        
-        if let temp = weather.currentTemp {
-            DispatchQueue.main.async {
-                self.temperatureLabel.text = "\(temp)°"
-            }
-        }
-        
-        if let description = weather.description {
-            DispatchQueue.main.async {
-                self.weatherDescriptionLabel.text = description.description.description
-                print(description.description.description)
-            }
-        }
-        
-        if let humidity = weather.humidity {
-            humidityBox.setup(text: "\(humidity) %")
-        }
-        
-        if let pressure = weather.pressure {
-            pressureBox.setup(text: "\(pressure) ГПа")
-        }
-        
-        if let windSpeed = weather.windSpeed {
-            windSpeedBox.setup(text: "\(windSpeed) м/с")
+            self.temperatureLabel.text = "\(weather.temperature)°"
+            self.weatherDescriptionLabel.text = weather.description
+            self.humidityBox.setup(text: "\(weather.humidity) %")
+            self.pressureBox.setup(text: "\(weather.pressure) ГПа")
+            self.windSpeedBox.setup(text: "\(weather.windSpeed) м/с")
+            self.minMaxTemperatureLabel.text = "Макс: \(weather.weather.first?.maxTemp ?? 0)°, мин: \(weather.weather.first?.minTemp ?? 0)°"
         }
         showAllView()
         DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
         }
     }
+    
     func hideAllView() {
         DispatchQueue.main.async { [weak self] in
             self?.boxStackView.isHidden = true
@@ -189,12 +172,12 @@ final class LocationWeatherScreenView: UIView {
 
 extension LocationWeatherScreenView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        5
+        weather?.weather.count ?? 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? WeatherViewCell
-        if let weather = weather?.weathers[indexPath.row] {
+        if let weather = weather?.weather[indexPath.row] {
             cell?.set(model: weather)
         }
         return cell ?? UITableViewCell()

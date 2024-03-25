@@ -12,7 +12,6 @@ struct WeatherRequest: URLRequestProtocol {
     var urlString: String
     
     init(urlString: String) {
-        print(urlString)
         self.urlString = urlString
         urlRequest = request(stringURL: urlString)
         
@@ -20,7 +19,7 @@ struct WeatherRequest: URLRequestProtocol {
     
     mutating func request(stringURL: String) -> URLRequest? {
         if let url = URL(string: stringURL) {
-            urlRequest = URLRequest(url: url, timeoutInterval: 30)
+            urlRequest = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 30)
         } else {
             return nil
         }

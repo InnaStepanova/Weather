@@ -10,27 +10,18 @@ import UIKit
 final class CityWeatherScreenPresenter {
     
     weak var view: LocationWeatherScreenViewProtocol?
-    let networkManader: NetworkManagerProtocol
-    private var city: String
+    private var apiModel: APIWeatherResponse
     
-    init(networkManader: NetworkManagerProtocol, contex: CityWeatherScreenFactory.Contex) {
-        self.networkManader = networkManader
-        self.city = contex.param
-        print("CONTEX INIT - \(contex.param)")
+    init(contex: APIWeatherResponse) {
+        self.apiModel = contex
     }
+    
 }
 
 extension CityWeatherScreenPresenter: LocationWeatherScreenPresenterProtocol {
-    func setupView() {
-        print("City - \(city)")
-        networkManader.getWeatherFor(city: city) { result in
-            switch result {
-            case .success(let serverModel):
-                let weather = LocationWeatherModel(serverModel: serverModel)
-                self.view?.setup(weather: weather)
-            case .failure(let error):
-                print(error)
-            }
-        }
+    func updateData() {
+        let locationModel = LocationWeatherModel(serverModel: apiModel)
+        if let viewModel = getCurrentViewModel(from: locationModel) {
+            view?.setup(weather: viewModel)}
     }
 }

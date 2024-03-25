@@ -24,7 +24,7 @@ final class BoxView: UIView {
         return label
     }()
     
-    private var stackView: UIStackView = {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 4

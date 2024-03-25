@@ -17,7 +17,7 @@ class LocationManager: NSObject, LocationManagerProtocol {
     private var locationManager = CLLocationManager()
     var currentCity: String? {
         didSet{
-            presenter?.setupView()
+            presenter?.updateData()
         }
     }
     weak var presenter: LocationWeatherScreenPresenterProtocol?

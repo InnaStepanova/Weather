@@ -38,7 +38,7 @@ class LocationWeatherScreenViewController: UIViewController {
 }
 
 extension LocationWeatherScreenViewController: LocationWeatherScreenViewProtocol {
-    func setup(weather: LocationWeatherModel) {
+    func setup(weather: CityWeatherViewModel) {
         weatherView.setup(weather: weather)
     }
 }

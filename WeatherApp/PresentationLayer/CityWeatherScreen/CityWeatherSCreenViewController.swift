@@ -14,12 +14,17 @@ protocol CityWeatherScreenViewProtocol {
 class CityWeatherSCreenViewController: UIViewController {
     
     let weatherView = LocationWeatherScreenView()
-    let presenter: LocationWeatherScreenPresenterProtocol
+    let presenter: CityWeatherScreenPresenter
     
-    init(presenter: LocationWeatherScreenPresenterProtocol) {
+    init(presenter: CityWeatherScreenPresenter) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
+    
+//    init(weather: CityWeatherViewModel) {
+//            self.weatherView = LocationWeatherScreenView(with: weather)
+//            super.init(nibName: nil, bundle: nil)
+//        }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -28,8 +33,8 @@ class CityWeatherSCreenViewController: UIViewController {
 
 
     override func viewDidLoad() {
+        print("INIT VC")
         super.viewDidLoad()
-        presenter.setupView()
         view.addSubview(weatherView)
         
         weatherView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,12 +45,14 @@ class CityWeatherSCreenViewController: UIViewController {
             weatherView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             weatherView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
+        presenter.updateData()
     }
 
 }
 
 extension CityWeatherSCreenViewController: LocationWeatherScreenViewProtocol {
-    func setup(weather: LocationWeatherModel) {
+    
+    func setup(weather: CityWeatherViewModel) {
         weatherView.setup(weather: weather)
     }
 }

@@ -7,10 +7,36 @@
 
 import UIKit
 
-class SearchWeatherViewController: UIViewController {
+protocol SearchWeatherScreenViewProtocol: AnyObject {
+    func showMessage()
+    func present(vc: UIViewController)
+}
+
+class SearchWeatherScreenViewController: UIViewController {
     
+    let presenter: SearchWeatherScreenPresenterProtocol
     private let baseImageView = UIImageView()
     private let searchTextField = UISearchTextField()
+    private let messageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Я не нашел такого города. Попробуй снова."
+        label.numberOfLines = 2
+        label.textColor = .darkGray
+        label.isHidden = true
+        return label
+    }()
+    
+    init(presenter: SearchWeatherScreenPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,9 +55,11 @@ class SearchWeatherViewController: UIViewController {
         
         view.addSubview(baseImageView)
         view.addSubview(searchTextField)
+        view.addSubview(messageLabel)
         
         baseImageView.translatesAutoresizingMaskIntoConstraints = false
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             baseImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -41,23 +69,40 @@ class SearchWeatherViewController: UIViewController {
             
             searchTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50)
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            
+            messageLabel.leadingAnchor.constraint(equalTo: searchTextField.leadingAnchor),
+            messageLabel.trailingAnchor.constraint(equalTo: searchTextField.trailingAnchor),
+            messageLabel.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10)
         ])
     }
 }
 
 // Добавим расширение для делегата
-extension SearchWeatherViewController: UITextFieldDelegate {
+extension SearchWeatherScreenViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         if let text = textField.text {
-            navigationController?.pushViewController(CityWeatherScreenFactory().make(with: CityWeatherScreenFactory.Contex(param: textField.text ?? "")), animated: true)
+            presenter.cheak(city: text)
         }
         textField.text = nil
         return true
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
-//        textField.text = nil
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        DispatchQueue.main.async {
+            self.messageLabel.isHidden = true
+        }
+    }
+    func present(vc: UIViewController) {
+        present(vc, animated: true)
+    }
+}
+
+extension SearchWeatherScreenViewController: SearchWeatherScreenViewProtocol {
+    func showMessage() {
+        DispatchQueue.main.async {
+            self.messageLabel.isHidden = false
+        }
     }
 }
