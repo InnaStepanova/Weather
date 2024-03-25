@@ -9,15 +9,15 @@ import UIKit
 
 protocol SearchWeatherScreenViewProtocol: AnyObject {
     func showMessage()
-    func present(vc: UIViewController)
 }
 
 class SearchWeatherScreenViewController: UIViewController {
     
     let presenter: SearchWeatherScreenPresenterProtocol
+   
     private let baseImageView = UIImageView()
     private let searchTextField = UISearchTextField()
-    private let messageLabel: UILabel = {
+    private lazy var messageLabel: UILabel = {
         let label = UILabel()
         label.text = "Я не нашел такого города. Попробуй снова."
         label.numberOfLines = 2
@@ -35,8 +35,6 @@ class SearchWeatherScreenViewController: UIViewController {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,7 +76,6 @@ class SearchWeatherScreenViewController: UIViewController {
     }
 }
 
-// Добавим расширение для делегата
 extension SearchWeatherScreenViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -93,9 +90,6 @@ extension SearchWeatherScreenViewController: UITextFieldDelegate {
         DispatchQueue.main.async {
             self.messageLabel.isHidden = true
         }
-    }
-    func present(vc: UIViewController) {
-        present(vc, animated: true)
     }
 }
 

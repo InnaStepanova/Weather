@@ -14,8 +14,9 @@ final class LocationWeatherModuleFactory {
         let requestSender = RequestSender()
         let networkManager = NetworkManager(requestService: requestSender)
         let locationManager = LocationManager()
+        let cacheManager = CacheManager.shared
         
-        let presenter = LocationWeatherScreenPresenter(networkManader: networkManager, locationManager: locationManager)
+        let presenter = LocationWeatherScreenPresenter(networkManader: networkManager, locationManager: locationManager, cacheManager: cacheManager)
         let vc = LocationWeatherScreenViewController(presenter: presenter)
         
         presenter.view = vc

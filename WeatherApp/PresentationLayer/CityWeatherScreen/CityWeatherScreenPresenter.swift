@@ -11,7 +11,6 @@ final class CityWeatherScreenPresenter {
     
     weak var view: LocationWeatherScreenViewProtocol?
     private var apiModel: APIWeatherResponse
-    
     init(contex: APIWeatherResponse) {
         self.apiModel = contex
     }

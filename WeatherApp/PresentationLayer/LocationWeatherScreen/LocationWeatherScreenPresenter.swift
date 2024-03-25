@@ -9,7 +9,7 @@ import CoreLocation
 
 protocol LocationWeatherScreenPresenterProtocol: AnyObject {
     func updateData()
-    // Метод который проверяет актуальность текущей модели - возвращает подготовленную ViewModel, если данные были получены более суток назад, то вернет nil
+    // Метод который подготавливает текущую модель к показу, а именно - данные отобржемые в главной части экрана - те данные которые были в моделе на данное время суток (интервал 3 часа в API), данные в таблице - это обобщенные данные по всем ответам от API
     func getCurrentViewModel(from model: LocationWeatherModel) -> CityWeatherViewModel?
 }
 
@@ -18,25 +18,40 @@ final class LocationWeatherScreenPresenter: LocationWeatherScreenPresenterProtoc
     weak var view: LocationWeatherScreenViewProtocol?
     let networkManader: NetworkManagerProtocol
     let locationManager: LocationManagerProtocol
+    let cacheManager: CacheManager
     
-    init(networkManader: NetworkManagerProtocol, locationManager: LocationManagerProtocol) {
+    init(networkManader: NetworkManagerProtocol, locationManager: LocationManagerProtocol, cacheManager: CacheManager) {
         self.networkManader = networkManader
         self.locationManager = locationManager
+        self.cacheManager = cacheManager
     }
     
     func updateData() {
         locationManager.getCurrentCity { [weak self] city in
             guard let self = self else {return}
             if let city = city {
-                self.networkManader.getWeatherFor(city: city) { result in
-                    switch result {
-                    case .success(let serverModel):
-                        let weather = LocationWeatherModel(serverModel: serverModel)
-                        if let viewModel = self.getCurrentViewModel(from: weather) {
-                            self.view?.setup(weather: viewModel)
+                //  Если есть валидный ответ в кэше используем его
+                if let weather = cacheManager.objectForKey(city) {
+                    let model = weather.weather //API Model
+                    print("FROM CACHE")
+                    let weather = LocationWeatherModel(serverModel: model)
+
+                    if let viewModel = self.getCurrentViewModel(from: weather) {
+                        self.view?.setup(weather: viewModel)
+                    }
+                } else {
+                    // если нет то получаем данные из интернета
+                    self.networkManader.getWeatherFor(city: city) { result in
+                        switch result {
+                        case .success(let serverModel):
+                            self.cacheManager.setObject(CacheModel(weather: serverModel), forKey: city) // сразу сохраняем в кэш
+                            let weather = LocationWeatherModel(serverModel: serverModel)
+                            if let viewModel = self.getCurrentViewModel(from: weather) {
+                                self.view?.setup(weather: viewModel)
+                            }
+                        case .failure(let error):
+                            print(error)
                         }
-                    case .failure(let error):
-                        print(error)
                     }
                 }
             }

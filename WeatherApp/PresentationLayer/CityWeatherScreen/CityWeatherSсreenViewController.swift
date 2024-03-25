@@ -20,11 +20,6 @@ class CityWeatherSCreenViewController: UIViewController {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
-    
-//    init(weather: CityWeatherViewModel) {
-//            self.weatherView = LocationWeatherScreenView(with: weather)
-//            super.init(nibName: nil, bundle: nil)
-//        }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -33,7 +28,6 @@ class CityWeatherSCreenViewController: UIViewController {
 
 
     override func viewDidLoad() {
-        print("INIT VC")
         super.viewDidLoad()
         view.addSubview(weatherView)
         
@@ -51,7 +45,6 @@ class CityWeatherSCreenViewController: UIViewController {
 }
 
 extension CityWeatherSCreenViewController: LocationWeatherScreenViewProtocol {
-    
     func setup(weather: CityWeatherViewModel) {
         weatherView.setup(weather: weather)
     }

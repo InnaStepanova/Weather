@@ -16,12 +16,12 @@ final class SearchWeatherScreenPresenter {
     
     weak var view: SearchWeatherScreenViewProtocol?
     let networkManader: NetworkManagerProtocol
-    let cacheManager: CacheManager2
+    let cacheManager: CacheManager
     let router: SearchWeatherScreenRouterProtocol
     
     init(
         networkManader: NetworkManagerProtocol,
-        cacheManager: CacheManager2,
+        cacheManager: CacheManager,
         router: SearchWeatherScreenRouterProtocol) {
             self.networkManader = networkManader
             self.cacheManager = cacheManager
@@ -36,21 +36,22 @@ extension SearchWeatherScreenPresenter: SearchWeatherScreenPresenterProtocol {
     }
     
     func cheak(city: String) {
+        //  Если есть валидный ответ в кэше используем его
         if let weather = cacheManager.objectForKey(city) {
             let model = weather.weather
-            print("FROM CACHE")
             router.openCityWeatherScreen(with: model)
         } else {
+            // если нет то получаем данные из интернета
             networkManader.getWeatherFor(city: city) { [weak self] result in
+                guard let self = self else { return }
                 switch result {
                 case .success(let responce):
-                    self?.cacheManager.setObject(CacheModel(weather: responce), forKey: city)
+                    self.cacheManager.setObject(CacheModel(weather: responce), forKey: city) // сразу сохраняем в кэш
                     DispatchQueue.main.async {
-                        self?.router.openCityWeatherScreen(with: responce)
+                        self.router.openCityWeatherScreen(with: responce)
                     }
-                    print("Ура")
                 case .failure(let error):
-                    self?.cityNotFind()
+                    self.cityNotFind()
                 }
             }
         }

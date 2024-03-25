@@ -24,7 +24,6 @@ final class SearchWeatherScreenRouter: SearchWeatherScreenRouterProtocol {
         self.root = root
     }
     func openCityWeatherScreen(with model: APIWeatherResponse) {
-        print("START ROUTING")
         let viewController = factory.make(with: model)
         root?.navigationController?.pushViewController(viewController, animated: true)
     }

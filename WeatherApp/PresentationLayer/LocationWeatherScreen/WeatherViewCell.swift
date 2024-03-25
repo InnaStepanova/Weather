@@ -37,6 +37,7 @@ class WeatherViewCell: UITableViewCell {
     }
     
     func set(model: WeatherViewModel) {
+        
         dateLabel.text = "\(model.date)"
         weatherImageView.image = UIImage(systemName: getConditionName(weatherId: model.descriptionId))
         tempLabel.text = "Макс: \(model.maxTemp)°, мин: \(model.minTemp)°"
@@ -69,7 +70,7 @@ class WeatherViewCell: UITableViewCell {
     private func getConditionName (weatherId: Int) -> String {
         switch weatherId {
         case 200...232:
-            return "cloud.bolt"
+            return "cloud"
         case 300...321:
             return "cloud.drizzle"
         case 500...531:

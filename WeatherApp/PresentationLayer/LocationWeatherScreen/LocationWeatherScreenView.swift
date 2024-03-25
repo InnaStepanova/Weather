@@ -57,6 +57,8 @@ final class LocationWeatherScreenView: UIView {
     private lazy var pressureBox = BoxView(title: "Давление")
     private lazy var humidityBox = BoxView(title: "Влажность")
     private lazy var windSpeedBox = BoxView(title: "Скорость ветра")
+    private lazy var fiveDaysWeatherTableView = UITableView()
+    private lazy var activityIndicator = UIActivityIndicatorView()
     
     private lazy var boxStackView: UIStackView = {
         let stackView = UIStackView()
@@ -67,19 +69,10 @@ final class LocationWeatherScreenView: UIView {
         return stackView
     }()
     
-    private lazy var fiveDaysWeatherTableView = UITableView()
-    private lazy var activityIndicator = UIActivityIndicatorView()
-    
     init() {
         super.init(frame: .zero)
         commonInit()
         hideAllView()
-    }
-    
-    init(with model: CityWeatherViewModel) {
-        super.init(frame: .zero)
-        commonInit()
-        setup(weather: model)
     }
     
     required init?(coder: NSCoder) {
